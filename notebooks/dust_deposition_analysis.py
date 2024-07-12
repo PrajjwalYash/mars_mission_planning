@@ -24,7 +24,7 @@ def get_dd_ref():
     return ely_dd_mean
 
 # Function to calculate dust deposition factor for 2028
-def dd_fac_2028(site, ref_dd_mean, Ef_p):
+def dd_fac_2028(site, ref_dd_mean,Ef_p, Ef_t):
     current_working_directory = os.getcwd()
     parent_directory = os.path.dirname(current_working_directory)
     path = os.path.join(parent_directory, 'data', f"{site['site_name']}_dd_mean.csv")
@@ -36,18 +36,18 @@ def dd_fac_2028(site, ref_dd_mean, Ef_p):
     dd_rate = np.array([dd_int(Ls[i]) for i in range(len(Ls))])
     Ls_dd = 1 - 0.002 / ref_dd_mean * dd_rate
 
-    sol_dd, sol_pow = compute_sol_dd_and_pow(Ls_dd, Ef_p, offsets_2028)
+    sol_dd, sol_pow, ecl_dur = compute_sol_dd_and_pow_and_ecl_dur(Ls_dd, Ef_p, Ef_t, offsets_2028)
     
     new = compute_new(sol_dd)
     
-    return new, sol_pow
+    return new, sol_pow,ecl_dur
 
 # Function to calculate available energy for 2028
 def avail_energy_2028(sol_pow, new, site_name):
     return avail_energy(sol_pow, new, site_name, 2028)
 
 # Function to calculate dust deposition factor for 2031
-def dd_fac_2031(site, ref_dd_mean, Ef_p):
+def dd_fac_2031(site, ref_dd_mean, Ef_p, Ef_t):
     current_working_directory = os.getcwd()
     parent_directory = os.path.dirname(current_working_directory)
     path = os.path.join(parent_directory, 'data', f"{site['site_name']}_dd_mean.csv")
@@ -59,23 +59,24 @@ def dd_fac_2031(site, ref_dd_mean, Ef_p):
     dd_rate = np.array([dd_int(Ls[i]) for i in range(len(Ls))])
     Ls_dd = 1 - 0.002 / ref_dd_mean * dd_rate
 
-    sol_dd, sol_pow = compute_sol_dd_and_pow(Ls_dd, Ef_p, offsets_2031)
+    sol_dd, sol_pow,ecl_dur = compute_sol_dd_and_pow_and_ecl_dur(Ls_dd, Ef_p, Ef_t, offsets_2031)
     
     new = compute_new(sol_dd)
         
-    return new, sol_pow
+    return new, sol_pow,ecl_dur
 
 # Function to calculate available energy for 2031
 def avail_energy_2031(sol_pow, new, site_name):
     return avail_energy(sol_pow, new, site_name, 2031)
 
 # Helper function to compute sol_dd and sol_pow
-def compute_sol_dd_and_pow(Ls_dd, Ef_p, offsets):
-    sol_dd, sol_pow = [], []
+def compute_sol_dd_and_pow_and_ecl_dur(Ls_dd, Ef_p, Ef_t, offsets):
+    sol_dd, sol_pow,ecl_dur = [], [], []
     for offset in offsets:
         sol_dd.append(Ls_dd[int(offset)])
         sol_pow.append(Ef_p[int(offset)])
-    return sol_dd, sol_pow
+        ecl_dur.append((len(Ef_t[int(offset),:][Ef_t[int(offset),:]==0])/(3600/88.75)))
+    return sol_dd, sol_pow, ecl_dur
 
 # Helper function to compute new array
 def compute_new(sol_dd):
@@ -87,7 +88,7 @@ def compute_new(sol_dd):
 # Helper function to calculate available energy and plot
 def avail_energy(sol_pow, new, site_name, year):
     sol_pow_dd = [sol_pow[i] * new[i] for i in range(len(new))]
-    sol_pow_smooth = 0.27778 * savgol_filter(sol_pow_dd, 5, 1) # window size 51, polynomial order 3
+    sol_pow_smooth = 0.27778 * savgol_filter(sol_pow_dd, 5, 1)
     
     f = plt.figure()
     plt.rcParams.update({'font.size': 16})
