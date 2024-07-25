@@ -90,6 +90,6 @@ def export_complete_year_irradiance(site_name, Ls, Ew1, Ef_w1, Bw1, Dw1):
     sur_irr['Diffuse'] = Dw1
     current_working_directory = os.getcwd()
     parent_directory = os.path.dirname(current_working_directory)
-    output_path = os.path.join(parent_directory, 'outputs', site_name + '_sur_irr_' + site_name + '.csv')
+    output_path = os.path.join(parent_directory, 'outputs', site_name + '_sur_irr_.csv')
     # Saving the DataFrame to a CSV file
     sur_irr.to_csv(output_path)
