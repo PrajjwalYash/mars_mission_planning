@@ -55,10 +55,10 @@ def data_rescaling_and_train_test_creation(df):
     df_y = df[['DD']]
 
     # Split data into train+validation and test sets
-    X_tr_val, X_test, y_tr_val, y_test = train_test_split(df_X, df_y, random_state=100, shuffle=True, test_size=0.3)
+    X_tr_val, X_test, y_tr_val, y_test = train_test_split(df_X, df_y, random_state=100, shuffle=True, test_size=0.2)
 
     # Further split the train+validation set into train and validation sets
-    X_train, X_val, y_train, y_val = train_test_split(X_tr_val, y_tr_val, random_state=100, shuffle=True, test_size=0.1)
+    X_train, X_val, y_train, y_val = train_test_split(X_tr_val, y_tr_val, random_state=100, shuffle=True, test_size=0.4)
 
     # Initialize scalers for features and target
     scaler_x = StandardScaler()
