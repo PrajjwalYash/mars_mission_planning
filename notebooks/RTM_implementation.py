@@ -20,10 +20,10 @@ B_l = np.zeros((np.shape(lamda)[0], np.shape(At)[0]))
 T_l = np.zeros((np.shape(lamda)[0], np.shape(At)[0]))
 E_l = np.zeros((np.shape(lamda)[0], np.shape(At)[0]))
 # Mission details
-ecl_load=70
+ecl_load=120
 sunlit_load=200
-payload=100
-bat_eff=0.8
+payload=150
+bat_eff=0.83
 panel_size=7
 panel_eff=0.28
 
