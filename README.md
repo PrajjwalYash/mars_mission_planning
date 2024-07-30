@@ -32,8 +32,6 @@ This repository contains tools and models for planning Martian missions, focusin
 
 ## Repository Structure
 
-## Repository Structure
-
 ```plaintext
 mars_mission_planning/
 ├── data/
