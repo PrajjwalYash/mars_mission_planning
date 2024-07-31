@@ -48,6 +48,7 @@ mars_mission_planning/
 │   ├── ML_for_dust_deposition_rate_prediction.py # Predict dust deposition rate
 │   ├── ML_data_creation.py          # Generate data for ML model from RTM outputs
 │   ├── ensembled_tree_models.py     # Fit and tune tree-based regression models
+│   ├── svm.py     # Fit and tune SVM and kNN regression models
 │   ├── model_evaluation_and_plotting.py # Compare model performance (R2 score, MAE)
 │
 ├── outputs/                         # Generated outputs
