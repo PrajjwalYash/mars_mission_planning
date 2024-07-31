@@ -39,17 +39,17 @@ mars_mission_planning/
 │   ├── site_dd_mean.csv            # Daily mean dust deposition rate data from MCD
 │
 ├── notebooks/
-│   ├── RTM_implementation.py        # RTM-based analysis for objectives 1, 2, and 3
-│   ├── mars_environment.py          # Ingest optical depth data for Martian atmospheric environment
-│   ├── complete_year_irr.py         # Total, direct, and diffuse irradiance for the entire Martian year
-│   ├── complete_year_analysis.py    # Visualization and datasets for a given site
-│   ├── dust_deposition_analysis.py  # Dust deposition reduction factor (DD_fac)
-│   ├── load_support.py              # Hours of payload support based on solar array size
-│   ├── ML_for_dust_deposition_rate_prediction.py # Predict dust deposition rate
-│   ├── ML_data_creation.py          # Generate data for ML model from RTM outputs
-│   ├── ensembled_tree_models.py     # Fit and tune tree-based regression models
-│   ├── svm.py     # Fit and tune SVM and kNN regression models
-│   ├── model_evaluation_and_plotting.py # Compare model performance (R2 score, MAE)
+│   ├── RTM_implementation.py                        # RTM-based analysis for objectives 1, 2, and 3
+│   ├── mars_environment.py                          # Ingest optical depth data for Martian atmospheric environment
+│   ├── complete_year_irr.py                         # Total, direct, and diffuse irradiance for the entire Martian year
+│   ├── complete_year_analysis.py                    # Visualization and datasets for a given site
+│   ├── dust_deposition_analysis.py                  # Dust deposition reduction factor (DD_fac)
+│   ├── load_support.py                              # Hours of payload support based on solar array size
+│   ├── ML_for_dust_deposition_rate_prediction.py    # Predict dust deposition rate
+│   ├── ML_data_creation.py                          # Generate data for ML model from RTM outputs
+│   ├── ensembled_tree_models.py                     # Fit and tune tree-based regression models
+│   ├── svm.py                                       # Fit and tune SVM and kNN regression models
+│   ├── model_evaluation_and_plotting.py             # Compare model performance (R2 score, MAE)
 │
 ├── outputs/                         # Generated outputs
 │
