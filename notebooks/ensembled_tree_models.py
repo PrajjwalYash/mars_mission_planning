@@ -15,17 +15,18 @@ def lgb_optimal_model(X_train, y_train):
 
     # Define the parameter grid for LightGBM
     param_dist = {
-        'num_leaves': [5, 10],
-        'max_depth': [5, 15],
+        'num_leaves': [31, 50],
+        'max_depth': [8, 15],
         'max_bin': [10,20],
         'extra_trees': [True],
         'learning_rate': [0.01, 0.1],
-        'n_estimators': [100, 150, 200],
+        'n_estimators': [150, 200],
         'boosting_type': ['goss'],
         'lambda_l1': [0, 0.2],
         'linear_tree': [True],
         'lambda_l2': [0, 0.2],
-        'min_split_gain': [0, 0.1]
+        'min_split_gain': [0, 0.1],
+        'verbose':[-1]
     }
 
     # Set up cross-validation with 3 folds
@@ -58,12 +59,12 @@ def xgb_optimal_model(X_train, y_train):
     param_dist = {
         'max_depth': [3, 5],
         'learning_rate': [0.01, 0.1, 0.2],
-        'n_estimators': [10, 25, 30],
-        'gamma': [0, 0.1, 0.2],
+        'n_estimators': [200, 350, 400],
+        'gamma': [1.5, 3],
         'max_bin': [10, 20],
-        'reg_alpha': [1, 2],  # L1 regularization term on weights
-        'reg_lambda': [1, 2],  # L2 regularization term on weights
-        'min_child_weight': [1, 5, 10],
+        'reg_alpha': [0.5, 1, 2],  # L1 regularization term on weights
+        'reg_lambda': [0.5, 1, 2],  # L2 regularization term on weights
+        'min_child_weight': [3, 5, 10],
         'subsample': [0.6, 0.8],
         'colsample_bytree': [0.8, 1]
     }
@@ -96,11 +97,12 @@ def rf_optimal_model(X_train, y_train):
 
     # Define the parameter grid for Random Forest
     param_dist = {
-        'n_estimators': [200, 250, 300],
-        'max_depth': [5, 10],
+        'n_estimators': [350, 450, 500],
+        'max_depth': [10, 15],
         'min_samples_split': [2, 4],
         'min_samples_leaf': [2, 4],
-        'bootstrap': [True, False] 
+        'bootstrap': [True, False],
+        'ccp_alpha': [0.01, 0.05, 0.1] 
     }
 
     # Set up cross-validation with 3 folds

@@ -5,6 +5,7 @@ import os
 from sklearn.metrics import r2_score, mean_absolute_error
 from ML_data_creation import *
 from ensembled_tree_models import *
+from svm_model import *
 from model_evaluation_and_plotting import *
 # Define the sites for fetching data
 sites = [
@@ -32,6 +33,11 @@ performance_metrics.append(evaluate_and_plot(lgb_optimal_model, "LightGBM", X_tr
 performance_metrics.append(evaluate_and_plot(xgb_optimal_model, "XGBoost", X_train_scaled, y_train_scaled, X_val_scaled, y_val_scaled, X_test_scaled, y_test_scaled, scaler_y))
 # Evaluate and plot for RF
 performance_metrics.append(evaluate_and_plot(rf_optimal_model, "RandomForest", X_train_scaled, y_train_scaled, X_val_scaled, y_val_scaled, X_test_scaled, y_test_scaled, scaler_y))
+# Evaluate and plot for SVM
+performance_metrics.append(evaluate_and_plot(svm_optimal_model, "SVR", X_train_scaled, y_train_scaled, X_val_scaled, y_val_scaled, X_test_scaled, y_test_scaled, scaler_y))
+# Evaluate and plot for KNNRegressor
+performance_metrics.append(evaluate_and_plot(knn_optimal_model, "kNN", X_train_scaled, y_train_scaled, X_val_scaled, y_val_scaled, X_test_scaled, y_test_scaled, scaler_y))
+
 
 df_performance = pd.DataFrame(performance_metrics)
 save_performance_and_plot(df_performance=df_performance)

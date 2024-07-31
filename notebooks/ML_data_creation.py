@@ -52,7 +52,8 @@ def data_preprocess(df):
 def data_rescaling_and_train_test_creation(df):
     # Split the DataFrame into features (X) and target (y)
     df_X = df.drop(columns=['DD'])
-    df_y = df[['DD']]
+    # df_y = df[['DD']]
+    df_y = np.log(df[['DD']])
 
     # Split data into train+validation and test sets
     X_tr_val, X_test, y_tr_val, y_test = train_test_split(df_X, df_y, random_state=100, shuffle=True, test_size=0.2)

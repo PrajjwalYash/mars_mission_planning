@@ -35,19 +35,19 @@ def evaluate_and_plot(model, model_name, X_train, y_train, X_val, y_val, X_test,
     print(f"{model_name} Test R2:", test_r2)
     
     # Unscale the test data for visualization
-    y_test_unscaled = scaler_y.inverse_transform(y_test.reshape(-1, 1))
-    test_predict_unscaled = scaler_y.inverse_transform(test_predict.reshape(-1, 1))
+    y_test_unscaled = (scaler_y.inverse_transform(y_test.reshape(-1, 1)))
+    test_predict_unscaled = (scaler_y.inverse_transform(test_predict.reshape(-1, 1)))
     
     # Plot predicted vs actual values
     plt.figure(figsize=(20, 12))
-    plt.scatter(y_test_unscaled, test_predict_unscaled, label=f'Predicted vs Actual ({model_name})')
+    plt.scatter(y_test_unscaled, test_predict_unscaled, label=f'Predicted vs Observed ({model_name})')
     max_val = max(y_test_unscaled.max(), test_predict_unscaled.max())
     min_val = min(y_test_unscaled.min(), test_predict_unscaled.min())
-    plt.plot([min_val, max_val], [min_val, max_val], color='red', linestyle='--', linewidth=2, label=f'R2_score = {test_r2}')
-    plt.xlabel('Actual Values')
-    plt.ylabel('Predicted Values')
-    plt.title(f'Predicted vs Actual Values ({model_name})')
-    plt.legend()
+    plt.plot([min_val, max_val], [min_val, max_val], color='red', linestyle='--', linewidth=2, label=f'R2_score = {np.round(test_r2,2)}')
+    plt.xlabel('Log of Observed dust deposition rate (in kgm$^{-2}$s$^{-1}$)', fontsize = 20)
+    plt.ylabel('Log of Predicted dust deposition rate (in kgm$^{-2}$s$^{-1}$)', fontsize = 20)
+    plt.title(f'Predicted vs Actual Values ({model_name})', fontsize = 30)
+    plt.legend(fontsize = 20)
     plt.grid()
     output_path = os.path.join(parent_directory, 'outputs', model_name + '_prediction_vs_observation_DD_rate.png')
     plt.savefig(output_path)
@@ -88,7 +88,7 @@ def save_performance_and_plot(df_performance):
     bar_positions = np.arange(len(df_performance))
 
     # Plot comparison of R2 and MAE across models using subplots
-    fig, axs = plt.subplots(2, 1, figsize=(12, 16))
+    fig, axs = plt.subplots(1, 2, figsize=(20, 12))
 
     for i, metric in enumerate(metrics):
         # Define the column names for the metric
