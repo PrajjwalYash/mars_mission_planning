@@ -3,6 +3,8 @@ import xgboost as xgb
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV, KFold
 from sklearn.metrics import make_scorer, mean_absolute_error
+import pickle
+import os
 
 # Function to calculate Mean Absolute Error (MAE) as a custom scoring function
 def mae_score(y_true, y_pred):
@@ -48,7 +50,13 @@ def lgb_optimal_model(X_train, y_train):
 
     # Train the model with the best hyperparameters
     lgb_model = lgb.LGBMRegressor(**best_params)
-    return lgb_model.fit(X_train, y_train)
+    lgb_model.fit(X_train, y_train)
+    current_working_directory = os.getcwd()
+    parent_directory = os.path.dirname(current_working_directory)
+    output_directory = os.path.join(parent_directory, 'models', 'lightgbm.pkl')
+    with open(output_directory, 'wb') as file:
+        pickle.dump(lgb_model, file)
+    return lgb_model
 
 # Function to find the optimal XGBoost model
 def xgb_optimal_model(X_train, y_train):
@@ -88,7 +96,13 @@ def xgb_optimal_model(X_train, y_train):
 
     # Train the model with the best hyperparameters
     xgb_model = xgb.XGBRegressor(**best_params)
-    return xgb_model.fit(X_train, y_train)
+    xgb_model.fit(X_train, y_train)
+    current_working_directory = os.getcwd()
+    parent_directory = os.path.dirname(current_working_directory)
+    output_directory = os.path.join(parent_directory, 'models', 'xgb.pkl')
+    with open(output_directory, 'wb') as file:
+        pickle.dump(xgb_model, file)
+    return xgb_model
 
 
 def rf_optimal_model(X_train, y_train):
@@ -124,4 +138,10 @@ def rf_optimal_model(X_train, y_train):
 
     # Train the model with the best hyperparameters
     rf_model = RandomForestRegressor(**best_params)
-    return rf_model.fit(X_train, y_train)
+    rf_model.fit(X_train, y_train)
+    current_working_directory = os.getcwd()
+    parent_directory = os.path.dirname(current_working_directory)
+    output_directory = os.path.join(parent_directory, 'models', 'randomforest.pkl')
+    with open(output_directory, 'wb') as file:
+        pickle.dump(rf_model, file)
+    return rf_model

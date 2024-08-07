@@ -49,6 +49,7 @@ def evaluate_and_plot(model, model_name, X_train, y_train, X_val, y_val, X_test,
     plt.title(f'Predicted vs Actual Values ({model_name})', fontsize = 30)
     plt.legend(fontsize = 20)
     plt.grid()
+    plt.tight_layout()
     output_path = os.path.join(parent_directory, 'outputs', model_name + '_prediction_vs_observation_DD_rate.png')
     plt.savefig(output_path)
     
@@ -113,7 +114,7 @@ def save_performance_and_plot(df_performance):
 
     # Set the main title for the entire plot
     fig.suptitle('Model Performance Comparison (R2 and MAE)', fontsize=16)
-
+    fig.tight_layout()
     # Save the figure
     comparison_plot_path = os.path.join(output_directory, 'model_performance_comparison.png')
     plt.savefig(comparison_plot_path)

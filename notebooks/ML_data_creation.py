@@ -39,7 +39,7 @@ def data_preprocess(df):
     df['D/E'] = df['Diffuse'] / df['TOA']
 
     # Drop unnecessary columns
-    df = df.drop(columns=['Ls', 'Direct', 'Diffuse'])
+    df = df.drop(columns=['Direct', 'Diffuse'])
 
     # Save the preprocessed DataFrame to a CSV file
     current_working_directory = os.getcwd()

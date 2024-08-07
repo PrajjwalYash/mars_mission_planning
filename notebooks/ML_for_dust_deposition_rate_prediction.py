@@ -5,7 +5,8 @@ import os
 from sklearn.metrics import r2_score, mean_absolute_error
 from ML_data_creation import *
 from ensembled_tree_models import *
-from svm_model import *
+from svm_knn_model import *
+from stacked_prediction import *
 from model_evaluation_and_plotting import *
 # Define the sites for fetching data
 sites = [
@@ -38,6 +39,8 @@ performance_metrics.append(evaluate_and_plot(svm_optimal_model, "SVR", X_train_s
 # Evaluate and plot for KNNRegressor
 performance_metrics.append(evaluate_and_plot(knn_optimal_model, "kNN", X_train_scaled, y_train_scaled, X_val_scaled, y_val_scaled, X_test_scaled, y_test_scaled, scaler_y))
 
+# Evaluate and plot for Stacked Model
+performance_metrics.append(stacking_optimal_model(model_name='Stacked_Predictor', X_train=X_train_scaled, y_train=y_train_scaled, X_val=X_val_scaled, y_val=y_val_scaled, X_test=X_test_scaled, y_test=y_test_scaled, scaler_y=scaler_y))
 
 df_performance = pd.DataFrame(performance_metrics)
 save_performance_and_plot(df_performance=df_performance)
