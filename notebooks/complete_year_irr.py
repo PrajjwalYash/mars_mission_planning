@@ -136,3 +136,66 @@ def complete_year_irradiance(lat, tau_total, w_total, g_total, A_l, E_ml):
         Dw1[q] = np.max(D_t[q])
 
     return E_t, T_t, B_t, D_t, Ep, Tp, Bp, Dp, Ew1, Tw1, Bw1, Dw1
+
+
+def rtm_api(Ls, tau, lat, w_total, g_total, A_l, E_ml):
+     w_total_array = np.array(w_total)
+     g_total_array = np.array(g_total)
+     A_l_array = np.array(A_l)
+     E_ml_array = np.array(E_ml)
+     t_array = At
+     Phi = lat * d  # Latitude in radians
+     Lst = Ls
+     t_array = At
+     w = w_total_array[int(Ls/5)]
+     g = g_total_array[int(Ls/5)]
+     A = A_l_array[int(Ls/5)]
+     # Calculate the cosine of the solar zenith angle
+     mu = (np.sin(O) * np.sin(Lst) * np.sin(Phi) +
+          np.sqrt(1 - np.sin(O)**2 * np.sin(Lst)**2) * np.cos(Phi) * np.cos((2 * np.pi * t_array) / P))
+     # Distance factor
+     r2 = ((1 + e * np.cos(Lst - Lsp)) / (1 - e**2))**2
+     
+     # Extraterrestrial irradiance
+     E = E_ml_array[:, None] * mu * r2
+     E[E < 0] = 0
+     
+     # Direct beam irradiance
+     B = E * np.exp(-tau[:, None] / mu)
+     k_l = np.sqrt(3 * (1 - w) * (1 - g * w))
+     P_l = (2 / 3) * np.sqrt(3 * (1 - w) / (1 - g * w))
+     alph = (3 / 4) * mu * w[:, None] * (1 + g[:, None] * (1 - w[:, None])) / (1 - (mu * k_l[:, None])**2)
+     bet = (1 / 2) * mu * w[:, None] * (1 / mu + 3 * mu * g[:, None] * (1 - w[:, None])) / (1 - (mu * k_l[:, None])**2)
+     # Calculate coefficients for multiple scattering
+     C3 = A[:, None] + (1 - A[:, None]) * alph - (1 + A[:, None]) * bet
+     C4 = (1 - A[:, None]) + P_l[:, None] * (1 + A[:, None])
+     C5 = (1 - A[:, None]) - P_l[:, None] * (1 + A[:, None])
+
+     # Compute the scattering coefficients
+     C2 = ((1 + P_l[:, None]) * C3 * np.exp(-tau[:, None] / mu) - (alph + bet) * C5 * np.exp(-k_l[:, None] * tau[:, None])) / \
+          ((1 + P_l[:, None]) * C4 * np.exp(k_l[:, None] * tau[:, None]) - (1 - P_l[:, None]) * C5 * np.exp(-k_l[:, None] * tau[:, None]))
+     C1 = (-(1 - P_l[:, None]) * C3 * np.exp(-tau[:, None] / mu) + (alph + bet) * C4 * np.exp(k_l[:, None] * tau[:, None])) / \
+          ((1 + P_l[:, None]) * C4 * np.exp(k_l[:, None] * tau[:, None]) - (1 - P_l[:, None]) * C5 * np.exp(-k_l[:, None] * tau[:, None]))
+
+     # Transmitted irradiance
+     T = E * (C1 * np.exp(-k_l[:, None] * tau[:, None]) * (1 + P_l[:, None]) + 
+               C2 * np.exp(k_l[:, None] * tau[:, None]) * (1 - P_l[:, None]) -
+               (alph + bet - 1) * np.exp(-tau[:, None] / mu))
+     # Assign results to arrays
+     E_l = E
+     B_l = B
+     T_l = T
+     B_l[np.isnan(B_l)] = 0
+
+     # Integrate over wavelength
+     temp4 = np.trapz(E_l, dx=10, axis=0)
+     temp5 = np.trapz(B_l, dx=10, axis=0)
+     temp6 = np.trapz(T_l, dx=10, axis=0)
+
+     E_t = temp4
+     B_t = temp5
+     T_t = temp6
+     B_t[np.isnan(B_t)] = 0
+     T_t[np.isnan(T_t)] = 0
+     D_t = T_t - B_t
+     return Ls, E_t, B_t, D_t

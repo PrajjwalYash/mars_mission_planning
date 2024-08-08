@@ -4,6 +4,9 @@ from sklearn.metrics import make_scorer, mean_absolute_error
 from sklearn.model_selection import GridSearchCV, KFold
 import pickle
 import os
+from sklearn.utils.class_weight import compute_sample_weight
+
+
 def svm_optimal_model(X_train, y_train):
     # Define the MAE scorer for GridSearchCV
     mae_scorer = make_scorer(mean_absolute_error, greater_is_better=False)
@@ -17,11 +20,13 @@ def svm_optimal_model(X_train, y_train):
     }
 
     # Set up cross-validation with 3 folds
-    kf = KFold(n_splits=3, shuffle=True, random_state=42)
+    kf = KFold(n_splits=4, shuffle=True, random_state=42)
 
     # Initialize the SVM regressor
     svm_model = SVR()
 
+   # Resample the training data for diversity
+    # weights = compute_sample_weight(class_weight='balanced', y=y_train)
     # Perform grid search to find the best hyperparameters
     grid_search = GridSearchCV(estimator=svm_model, param_grid=param_dist, scoring=mae_scorer, cv=kf, 
                                verbose=0, n_jobs=-1)
@@ -56,11 +61,13 @@ def knn_optimal_model(X_train, y_train):
     }
 
     # Set up cross-validation with 3 folds
-    kf = KFold(n_splits=3, shuffle=True, random_state=42)
+    kf = KFold(n_splits=4, shuffle=True, random_state=42)
 
     # Initialize the KNN regressor
     knn_model = KNeighborsRegressor()
 
+   # Resample the training data for diversity
+    # weights = compute_sample_weight(class_weight='balanced', y=y_train)
     # Perform grid search to find the best hyperparameters
     grid_search = GridSearchCV(estimator=knn_model, param_grid=param_dist, scoring=mae_scorer, cv=kf, 
                                verbose=0, n_jobs=-1)

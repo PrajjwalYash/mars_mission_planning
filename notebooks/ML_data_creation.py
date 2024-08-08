@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import os
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+import pickle
 
 # Function to fetch and merge data from multiple sites
 def fetch_data(sites):
@@ -72,5 +73,36 @@ def data_rescaling_and_train_test_creation(df):
     y_val_scaled = scaler_y.transform(y_val).ravel()
     X_test_scaled = scaler_x.transform(X_test)
     y_test_scaled = scaler_y.transform(y_test).ravel()
-
+    current_working_directory = os.getcwd()
+    parent_directory = os.path.dirname(current_working_directory)
+    output_directory1 = os.path.join(parent_directory, 'models', 'scaler_x.pkl')
+    output_directory2 = os.path.join(parent_directory, 'models', 'scaler_y.pkl')
+    with open(output_directory1, 'wb') as file:
+        pickle.dump(scaler_x, file)
+    with open(output_directory2, 'wb') as file:
+        pickle.dump(scaler_y, file)
     return scaler_x, scaler_y, df_X, df_y, X_train_scaled, y_train_scaled, X_val_scaled, y_val_scaled, X_test_scaled, y_test_scaled
+
+
+def data_preprocess_test_api(Ls, E_t, B_t, D_t):
+    df_test = pd.DataFrame(columns=['Ls', 'TOA', 'Direct', 'Diffuse'])
+    df_test['Ls'] = Ls
+    df_test['TOA'] = E_t
+    df_test['Direct'] = B_t
+    df_test['Diffuse'] = D_t
+    df_test['B/E'] = df_test['Direct'] / df_test['TOA']
+    df_test['D/E'] = df_test['Diffuse'] / df_test['TOA']
+
+    # Drop unnecessary columns
+    df_test = df_test.drop(columns=['Direct', 'Diffuse'])
+
+    # Load the standard scaler
+    current_working_directory = os.getcwd()
+    parent_directory = os.path.dirname(current_working_directory)
+    model_path = os.path.join(parent_directory, 'models', 'scaler_x.pkl')
+    with open(model_path, 'rb') as file:
+        scaler_x = pickle.load(file)
+    
+    test_data = scaler_x.transform(df_test)
+
+    return test_data

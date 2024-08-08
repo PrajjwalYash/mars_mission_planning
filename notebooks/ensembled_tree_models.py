@@ -5,6 +5,7 @@ from sklearn.model_selection import GridSearchCV, KFold
 from sklearn.metrics import make_scorer, mean_absolute_error
 import pickle
 import os
+from sklearn.utils.class_weight import compute_sample_weight
 
 # Function to calculate Mean Absolute Error (MAE) as a custom scoring function
 def mae_score(y_true, y_pred):
@@ -32,11 +33,12 @@ def lgb_optimal_model(X_train, y_train):
     }
 
     # Set up cross-validation with 3 folds
-    kf = KFold(n_splits=3, shuffle=True, random_state=42)
+    kf = KFold(n_splits=4, shuffle=True, random_state=42)
 
     # Initialize the LightGBM regressor
     lgb_model = lgb.LGBMRegressor()
-
+    # Resample the training data for diversity
+    # weights = compute_sample_weight(class_weight='balanced', y=y_train)
     # Perform grid search to find the best hyperparameters
     grid_search = GridSearchCV(estimator=lgb_model, param_grid=param_dist, scoring=mae_scorer, cv=kf, 
                                verbose=0, n_jobs=-1)
@@ -78,11 +80,13 @@ def xgb_optimal_model(X_train, y_train):
     }
 
     # Set up cross-validation with 3 folds
-    kf = KFold(n_splits=3, shuffle=True, random_state=42)
+    kf = KFold(n_splits=4, shuffle=True, random_state=42)
 
     # Initialize the XGBoost regressor
     xgb_model = xgb.XGBRegressor()
 
+   # Resample the training data for diversity
+    # weights = compute_sample_weight(class_weight='balanced', y=y_train)
     # Perform grid search to find the best hyperparameters
     grid_search = GridSearchCV(estimator=xgb_model, param_grid=param_dist, scoring=mae_scorer, cv=kf, 
                                verbose=0, n_jobs=-1)
@@ -120,11 +124,13 @@ def rf_optimal_model(X_train, y_train):
     }
 
     # Set up cross-validation with 3 folds
-    kf = KFold(n_splits=3, shuffle=True, random_state=42)
+    kf = KFold(n_splits=4, shuffle=True, random_state=42)
 
     # Initialize the Random Forest regressor
     rf_model = RandomForestRegressor()
 
+# Resample the training data for diversity
+    # weights = compute_sample_weight(class_weight='balanced', y=y_train)
     # Perform grid search to find the best hyperparameters
     grid_search = GridSearchCV(estimator=rf_model, param_grid=param_dist, scoring=mae_scorer, cv=kf, 
                                verbose=0, n_jobs=-1)
