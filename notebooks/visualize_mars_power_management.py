@@ -49,18 +49,23 @@ ecl_load = st.slider("Select Nighttime Load (W)", min_value=100, max_value=250, 
 sunlit_load = st.slider("Select Daytime Load (W)", min_value=100, max_value=250, value=200, step=10)
 
 # Slider for payload
-payload = st.slider("Select Payload (kg)", min_value=140, max_value=180, value=150, step=5)
+payload = st.slider("Select Payload requirement (W))", min_value=100, max_value=200, value=150, step=5)
 
 # Slider for panel size
-panel_size = st.slider("Select Panel Size (m²)", min_value=5.0, max_value=7.0, value=7.0, step=0.5)
-    # Fixed parameters
+panel_size = st.slider("Select Panel Size (m²)", min_value=4.0, max_value=8.0, value=7.0, step=0.5)
+# Slider for battery size
+bat_size = st.slider("Select battery size (Ah)", min_value=100, max_value=500, value=250, step=50)
+# Slider for Discharge voltage
+disch_vlt = st.slider("Select battery discharge voltage (V)", min_value=20, max_value=40, value=25, step=5)
+# Fixed parameters
 bat_eff = 0.83
 panel_eff = 0.28
-
 # Initialize dataframes for comparison
 df_compare = pd.DataFrame(columns=['Sols'])
 load_support_duration_2028 = pd.DataFrame(columns=['Sols'])
 load_support_duration_2031 = pd.DataFrame(columns=['Sols'])
+bat_dod_2028 = pd.DataFrame(columns=['Sols'])
+bat_dod_2031 = pd.DataFrame(columns=['Sols'])
 # Iterate over selected sites and perform calculations
 for site in sites:
     if site['full_name'] not in selected_sites:
@@ -105,16 +110,18 @@ for site in sites:
     df_compare[site['site_name'] + str(2031)] = energy_2031
 
     load_support_duration_2028['Sols'] = np.arange(1, 180, 1)
-    load_support_duration_2028[site['site_name']] = load_support_duration(
+    bat_dod_2028['Sols'] = np.arange(1, 180, 1)
+    load_support_duration_2028[site['site_name']], bat_dod_2028[site['site_name']] = load_support_duration(
         ecl_dur=np.array(ecl_dur_2028), sol_pow_smooth=energy_2028,
-        ecl_load=ecl_load, sunlit_load=sunlit_load, payload=payload,
+        ecl_load=ecl_load, sunlit_load=sunlit_load, payload=payload, bat_size=bat_size, disch_vlt=disch_vlt,
         bat_eff=bat_eff, panel_size=panel_size, panel_eff=panel_eff
     )
 
     load_support_duration_2031['Sols'] = np.arange(1, 180, 1)
-    load_support_duration_2031[site['site_name']] = load_support_duration(
+    bat_dod_2031['Sols'] = np.arange(1, 180, 1)
+    load_support_duration_2031[site['site_name']], bat_dod_2031[site['site_name']] = load_support_duration(
         ecl_dur=np.array(ecl_dur_2031), sol_pow_smooth=energy_2031,
-        ecl_load=ecl_load, sunlit_load=sunlit_load, payload=payload,
+        ecl_load=ecl_load, sunlit_load=sunlit_load, payload=payload, bat_size=bat_size, disch_vlt=disch_vlt,
         bat_eff=bat_eff, panel_size=panel_size, panel_eff=panel_eff
     )
 
@@ -131,8 +138,70 @@ for col in energy_compare_2031.columns:
     plt.plot(np.arange(1, 181, 1), energy_compare_2031[col], label=col)
 
 plt.xlabel("Sols")
-plt.ylabel("Cumulative Mean Energy (kWh)")
-plt.title("Cumulative Mean Energy Comparison for Selected Sites")
-plt.legend()
+plt.ylabel("Cumulative Mean Energy (kWh)", fontsize = 30)
+plt.title("Cumulative Mean Energy Comparison for Selected Sites", fontsize = 30)
+plt.xticks(fontsize=25)
+plt.yticks(fontsize=25)
+plt.legend(fontsize=20)
 plt.grid(True)
+st.pyplot(plt)
+
+load_support_duration_2031.set_index('Sols', inplace = True)
+load_support_duration_2028.set_index('Sols', inplace = True)
+
+plt.figure(figsize=(20, 12))
+for col in load_support_duration_2028.columns:
+    plt.plot(np.arange(1,180,1), load_support_duration_2028[col].values, lw=3, label=col)
+plt.xlabel('Sols since landing', fontsize=30)
+plt.ylabel('Time (in hours)', fontsize=30)
+plt.xticks(fontsize=25)
+plt.yticks(fontsize=25)
+plt.legend(fontsize=20)
+plt.title('Payload operation duration possible since landing for different sites: 2028 launch window', fontsize=30)
+plt.grid()
+
+st.pyplot(plt)
+
+
+plt.figure(figsize=(20, 12))
+for col in load_support_duration_2031.columns:
+    plt.plot(np.arange(1,180,1), load_support_duration_2031[col].values, lw=3, label=col)
+plt.xlabel('Sols since landing', fontsize=30)
+plt.ylabel('Time (in hours)', fontsize=30)
+plt.xticks(fontsize=25)
+plt.yticks(fontsize=25)
+plt.legend(fontsize=20)
+plt.title('Payload operation duration possible since landing for different sites: 2031 launch window', fontsize=30)
+plt.grid()
+
+st.pyplot(plt)
+
+bat_dod_2031.set_index('Sols', inplace = True)
+bat_dod_2028.set_index('Sols', inplace = True)
+
+plt.figure(figsize=(20, 12))
+for col in bat_dod_2028.columns:
+    plt.plot(np.arange(1,180,1), bat_dod_2028[col].values, lw=3, label=col)
+plt.xlabel('Sols since landing', fontsize=30)
+plt.ylabel('DOD (in %)', fontsize=30)
+plt.xticks(fontsize=25)
+plt.yticks(fontsize=25)
+plt.legend(fontsize=20)
+plt.title('Battery Depth of Discharge since landing for different sites: 2028 launch window', fontsize=30)
+plt.grid()
+
+st.pyplot(plt)
+
+
+plt.figure(figsize=(20, 12))
+for col in bat_dod_2031.columns:
+    plt.plot(np.arange(1,180,1), bat_dod_2031[col].values, lw=3, label=col)
+plt.xlabel('Sols since landing', fontsize=30)
+plt.ylabel('DOD (in %)', fontsize=30)
+plt.xticks(fontsize=25)
+plt.yticks(fontsize=25)
+plt.legend(fontsize=20)
+plt.title('Battery Depth of Discharge since landing for different sites: 2031 launch window', fontsize=30)
+plt.grid()
+
 st.pyplot(plt)

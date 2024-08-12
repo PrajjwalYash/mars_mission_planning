@@ -23,6 +23,8 @@ E_l = np.zeros((np.shape(lamda)[0], np.shape(At)[0]))
 ecl_load=120
 sunlit_load=200
 payload=150
+bat_size = 500
+disch_vlt = 25
 bat_eff=0.83
 panel_size=7
 panel_eff=0.28
@@ -44,6 +46,8 @@ def main():
     df_compare = pd.DataFrame(columns=['Sols'])
     load_support_duration_2028 = pd.DataFrame(columns=['Sols'])
     load_support_duration_2031 = pd.DataFrame(columns=['Sols'])
+    bat_dod_2028 = pd.DataFrame(columns=['Sols'])
+    bat_dod_2031 = pd.DataFrame(columns=['Sols'])
 
     # Iterate over each site and perform calculations
     for site in sites:
@@ -88,17 +92,25 @@ def main():
         df_compare[site['site_name'] + str(2031)] = energy_2031
 
         load_support_duration_2028['Sols'] = np.arange(1,180,1)
-        load_support_duration_2028[site['site_name']] = load_support_duration(ecl_dur=np.array(ecl_dur_2028), sol_pow_smooth=energy_2028,ecl_load=ecl_load, sunlit_load=sunlit_load, payload=payload, bat_eff=bat_eff, panel_size=panel_size,panel_eff=panel_eff)
+        bat_dod_2028['Sols'] = np.arange(1,180,1)
+        load_support_duration_2028[site['site_name']], bat_dod_2028[site['site_name']] = load_support_duration(ecl_dur=np.array(ecl_dur_2028), sol_pow_smooth=energy_2028,ecl_load=ecl_load, sunlit_load=sunlit_load, payload=payload, bat_size=bat_size, disch_vlt=disch_vlt, bat_eff=bat_eff, panel_size=panel_size,panel_eff=panel_eff)
         load_support_duration_2031['Sols'] = np.arange(1,180,1)
-        load_support_duration_2031[site['site_name']] = load_support_duration(ecl_dur=np.array(ecl_dur_2031), sol_pow_smooth=energy_2031,ecl_load=ecl_load, sunlit_load=sunlit_load, payload=payload, bat_eff=bat_eff, panel_size=panel_size,panel_eff=panel_eff)
+        bat_dod_2028['Sols'] = np.arange(1,180,1)
+        load_support_duration_2031[site['site_name']], bat_dod_2031[site['site_name']] = load_support_duration(ecl_dur=np.array(ecl_dur_2031), sol_pow_smooth=energy_2031,ecl_load=ecl_load, sunlit_load=sunlit_load, payload=payload, bat_size=bat_size, disch_vlt=disch_vlt,bat_eff=bat_eff, panel_size=panel_size,panel_eff=panel_eff)
     load_support_duration_2031.set_index('Sols', inplace = True)
     load_support_duration_2028.set_index('Sols', inplace = True)
+    bat_dod_2031.set_index('Sols', inplace = True)
+    bat_dod_2028.set_index('Sols', inplace = True)
     current_working_directory = os.getcwd()
     parent_directory = os.path.dirname(current_working_directory)
     output_path = os.path.join(parent_directory, 'outputs', 'comparison_load_support_2028.csv')
     load_support_duration_2028.to_csv(output_path)
     output_path = os.path.join(parent_directory, 'outputs', 'comparison_load_support_2031.csv')
     load_support_duration_2031.to_csv(output_path)
+    output_path = os.path.join(parent_directory, 'outputs', 'comparison_battery_dod_2028.csv')
+    bat_dod_2028.to_csv(output_path)
+    output_path = os.path.join(parent_directory, 'outputs', 'comparison_battery_dod_2031.csv')
+    bat_dod_2031.to_csv(output_path)
     # Perform energy comparison plots
     df_compare_cumsum = df_compare.cumsum(axis=0)
     df_compare_cumsum = df_compare_cumsum.divide(np.array(df_compare_cumsum.index + 1), axis=0)
